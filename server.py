@@ -27,23 +27,11 @@ app.layout = html.Div(
 )
 
 
-last_interval = 0
-
-
 @app.callback(
     Output("network-graph", "figure"), Input("interval-component", "n_intervals")
 )
 def get_graph(n_intervals):
-    print("Updating graph")
-    print("n_intervals", n_intervals)
-
     global fig
-    global last_interval
-
-    if n_intervals == last_interval and fig is not None:
-        return fig
-
-    last_interval = n_intervals
 
     users = get_users()
 

@@ -27,10 +27,10 @@ jobs:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
       - name: Build cron container image
-        run: docker build -t registry.digitalocean.com/csefest2024-registry/csefest2024-somiti-cron:$(echo $GITHUB_SHA | head -c7) .
+        run: docker build -f Dockerfile.cron -t registry.digitalocean.com/csefest2024-registry/csefest2024-somiti-cron:$(echo $GITHUB_SHA | head -c7) .
 
       - name: Build server container image
-        run: docker build -t registry.digitalocean.com/csefest2024-registry/csefest2024-somiti-server:$(echo $GITHUB_SHA | head -c7) .
+        run: docker build -f Dockerfile.server -t registry.digitalocean.com/csefest2024-registry/csefest2024-somiti-server:$(echo $GITHUB_SHA | head -c7) .
 
       - name: Log in to DigitalOcean Container Registry with short-lived credentials
         run: doctl registry login --expiry-seconds 1200
