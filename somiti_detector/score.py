@@ -50,8 +50,8 @@ def overlap_score(sub1, sub2):
 
 
 def edge_score(u1, u2, sub1, sub2):
-    # 10 puzzle grace period
-    if min(len(sub1), len(sub2)) < 10:
+    # 15 puzzle grace period
+    if min(len(sub1), len(sub2)) < 15:
         return 0.0
 
     return (
