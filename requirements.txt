@@ -6,3 +6,6 @@ psycopg_pool==3.2.3
 python-dotenv==1.0.1
 pytz==2023.3.post1
 tqdm==4.65.0
+numpy
+gzip
+matplotlib
