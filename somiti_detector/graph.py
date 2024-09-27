@@ -27,6 +27,20 @@ def find_graph(users):
     return G
 
 
+def find_graph_local(entries):
+
+    G = nx.Graph()
+    for u1, u2, weight in entries:
+        if weight > config.threshold:
+            G.add_edge(
+                str(u1),
+                str(u2),
+                weight=-math.log(weight),
+            )
+
+    return G
+
+
 def find_communities(G):
     communities_generator = nx_comm.girvan_newman(G)
     top_level_communities = next(communities_generator)

@@ -80,41 +80,65 @@ def calc_user_edge_scores(user, users):
     return somiti_scores
 
 
-def calc_and_update_edge_score(u1, u2):
+def calc_score(u1, u2):
     sub1 = get_correct_submissions(u1)
     sub2 = get_correct_submissions(u2)
     score = edge_score(u1, u2, sub1, sub2)
+    return (u1, u2, score)
 
+
+def update_score(entries):
     with pool.connection() as connection:
         with connection.cursor() as cursor:
-            cursor.execute(
-                "SELECT * FROM somiti_graph WHERE user_id1 = %s AND user_id2 = %s",
-                (u1.id, u2.id),
-            )
-            try:
-                if cursor.rowcount == 0:
-                    cursor.execute(
-                        "INSERT INTO somiti_graph (user_id1, user_id2, weight) VALUES (%s, %s, %s)",
-                        (u1.id, u2.id, score),
-                    )
-                else:
-                    cursor.execute(
-                        "UPDATE somiti_graph SET weight = %s WHERE user_id1 = %s AND user_id2 = %s",
-                        (score, u1.id, u2.id),
-                    )
-            except Exception as e:
-                print(f"Error: {e}")
+            query = """
+                INSERT INTO somiti_graph (user_id1, user_id2, weight)
+                VALUES (%s, %s, %s)
+                ON CONFLICT (user_id1, user_id2)
+                DO UPDATE SET weight = EXCLUDED.weight
+            """
+
+            data = [(u1.id, u2.id, score) for u1, u2, score in entries]
+            cursor.executemany(query, data)
 
 
 def calc_edge_scores(users):
     tasks = []
+    entries = []
 
     with ThreadPoolExecutor(max_workers=24) as executor:
         for i in range(len(users)):
             for j in range(i + 1, len(users)):
-                tasks.append(
-                    executor.submit(calc_and_update_edge_score, users[i], users[j])
+                tasks.append(executor.submit(calc_score, users[i], users[j]))
+
+        for task in tqdm(tasks):
+            entries.append(task.result())
+
+    workers = 24
+    tasks = []
+    batch = len(entries) // workers
+    with ThreadPoolExecutor(max_workers=workers) as executor:
+        for i in range(0, len(entries), 100):
+            tasks.append(
+                executor.submit(
+                    update_score,
+                    entries[i : min(i + 100, len(entries))],
                 )
+            )
 
         for task in tqdm(tasks):
             task.result()
+
+
+def cal_edge_scores_local(users):
+    tasks = []
+    entries = []
+
+    with ThreadPoolExecutor(max_workers=24) as executor:
+        for i in range(len(users)):
+            for j in range(i + 1, len(users)):
+                tasks.append(executor.submit(calc_score, users[i], users[j]))
+
+        for task in tqdm(tasks):
+            entries.append(task.result())
+
+    return entries
