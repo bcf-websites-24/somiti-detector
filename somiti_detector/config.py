@@ -9,9 +9,7 @@ class Config:
 
     batch_diff_multiplier = 2.0
 
-    threshold = 0.4
-
-    update_interval = 2 * 60  # Update every hour
+    threshold = 0.35
 
 
 config = Config()
