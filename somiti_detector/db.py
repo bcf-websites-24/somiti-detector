@@ -3,7 +3,7 @@ import dotenv
 import os
 from psycopg_pool import ConnectionPool
 
-dotenv.load_dotenv()
+dotenv.load_dotenv(".env")
 
 
 pool = ConnectionPool(
@@ -25,6 +25,9 @@ class User:
         self.batch = int(batch)
 
     def __str__(self):
+        return f"{self.name} ({self.batch})"
+
+    def __repr__(self):
         return f"{self.name} ({self.batch})"
 
 
@@ -81,3 +84,19 @@ def get_correct_submissions(user):
             submissions_dict[user.id] = submissions
 
             return submissions
+
+
+def update_user_somiti_score(u, score):
+    with pool.connection() as connection:
+        with connection.cursor() as cursor:
+            cursor.execute(
+                "UPDATE users SET shomobay_score = %s WHERE id = %s",
+                (score, u.id),
+            )
+
+
+def max_somiti_weight():
+    with pool.connection() as connection:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT MAX(weight) FROM somiti_graph")
+            return cursor.fetchone()[0]
