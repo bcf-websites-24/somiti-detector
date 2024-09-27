@@ -35,7 +35,7 @@ def find_communities(G):
 
 
 def draw_graph(G, communities):
-    pos = nx.spring_layout(G, k=0.1, iterations=100)
+    pos = nx.spring_layout(G, k=0.2, iterations=100)
 
     edge_x = []
     edge_y = []
