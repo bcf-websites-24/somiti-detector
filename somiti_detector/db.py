@@ -19,16 +19,17 @@ with pool.connection() as connection:
 
 
 class User:
-    def __init__(self, id, name, batch):
+    def __init__(self, id, name, roll, batch):
         self.id = str(id)
         self.name = name
+        self.roll = roll
         self.batch = int(batch)
 
     def __str__(self):
-        return f"{self.name} ({self.batch})"
+        return f"{self.name} ({self.roll})"
 
     def __repr__(self):
-        return f"{self.name} ({self.batch})"
+        return f"{self.name} ({self.roll})"
 
 
 def get_users():
@@ -39,10 +40,10 @@ def get_users():
     with pool.connection() as connection:
         with connection.cursor() as cursor:
             cursor.execute(
-                "SELECT id, username, batch FROM users WHERE user_type<>'staff'"
+                "SELECT id, username, student_id, batch FROM users WHERE user_type<>'staff'"
             )
             users = cursor.fetchall()
-            users = [User(user[0], user[1], user[2]) for user in users]
+            users = [User(user[0], user[1], user[2], user[3]) for user in users]
             return users
 
 
