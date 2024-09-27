@@ -93,8 +93,6 @@ def update_score(entries):
             query = """
                 INSERT INTO somiti_graph (user_id1, user_id2, weight)
                 VALUES (%s, %s, %s)
-                ON CONFLICT (user_id1, user_id2)
-                DO UPDATE SET weight = EXCLUDED.weight
             """
 
             data = [(u1.id, u2.id, score) for u1, u2, score in entries]
@@ -113,15 +111,19 @@ def calc_edge_scores(users):
         for task in tqdm(tasks):
             entries.append(task.result())
 
+    with pool.connection() as connection:
+        with connection.cursor() as cursor:
+            cursor.execute("DELETE FROM somiti_graph")
+
     workers = 24
     tasks = []
-    batch = len(entries) // workers
+    batch = 100
     with ThreadPoolExecutor(max_workers=workers) as executor:
-        for i in range(0, len(entries), 100):
+        for i in range(0, len(entries), batch):
             tasks.append(
                 executor.submit(
                     update_score,
-                    entries[i : min(i + 100, len(entries))],
+                    entries[i : min(i + batch, len(entries))],
                 )
             )
 
