@@ -37,12 +37,18 @@ def overlap_score(sub1, sub2):
     @param dt: the time difference
     @return: the score
     """
+
+    skip_levels = [29, 60]
+
     total_time = 0
     overlap_time = 0
     total_time = max(
         (sub1[-1] - sub1[0]).total_seconds(), (sub2[-1] - sub2[0]).total_seconds()
     )
     for i in range(1, min(len(sub1), len(sub2))):
+        if i in skip_levels:
+            continue
+
         overlap_time += max(
             (min(sub1[i], sub2[i]) - max(sub1[i - 1], sub2[i - 1])).total_seconds(), 0
         )

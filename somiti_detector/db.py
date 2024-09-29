@@ -43,7 +43,8 @@ def get_users():
                 "SELECT id, username, student_id, batch FROM users WHERE user_type<>'staff'"
             )
             users = cursor.fetchall()
-            users = [User(user[0], user[1], user[2], user[3]) for user in users]
+            users = [User(user[0], user[1], user[2], user[3])
+                     for user in users]
             return users
 
 
