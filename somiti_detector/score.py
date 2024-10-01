@@ -38,7 +38,7 @@ def overlap_score(sub1, sub2):
     @return: the score
     """
 
-    skip_levels = [29, 60]
+    skip_levels = [30, 61, 81]
 
     total_time = 0
     overlap_time = 0
