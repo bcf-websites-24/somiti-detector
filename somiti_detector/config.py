@@ -9,7 +9,7 @@ class Config:
 
     batch_diff_multiplier = 2.0
 
-    threshold = 0.2
+    threshold = 0.15
 
 
 config = Config()

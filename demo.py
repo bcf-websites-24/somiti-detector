@@ -9,5 +9,6 @@ G = find_graph_local(entries)
 communities = find_communities(G)
 fig = draw_graph(G, communities)
 
+# update_somiti_scores(users, G, communities)
 
 fig.show()
