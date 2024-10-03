@@ -3,7 +3,7 @@ kind: CronJob
 metadata:
   name: somiti-cron
 spec:
-  schedule: "25 * * * *"
+  schedule: "35 * * * *"
   jobTemplate:
     spec:
       template:
