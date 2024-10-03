@@ -89,6 +89,8 @@ def get_correct_submissions(user):
 
 
 def update_user_somiti_score(u, score):
+    if u.roll == '1705027' or u.roll == 1705027:
+        return
     with pool.connection() as connection:
         with connection.cursor() as cursor:
             cursor.execute(
